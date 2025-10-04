@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "../utils/axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -19,12 +19,8 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/user/register",
-        formData
-      );
+      const res = await api.post("/user/register", formData);
 
-      // Make sure your backend actually sends { success: true, message: "..." }
       if (res.data.success) {
         toast.success(res.data.message);
         navigate("/login");

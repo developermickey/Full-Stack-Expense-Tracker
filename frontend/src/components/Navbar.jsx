@@ -1,32 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../utils/axios";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(false); // logged-in state
+  const { user, loading, logout: logoutContext } = useAuth();
   const navigate = useNavigate();
 
-  // Check token on mount
-  useEffect(() => {
-    const token = localStorage.getItem("token"); // get token
-    setUser(!!token); // true if token exists
-  }, []);
-
-  // Logout handler
   const logoutHandler = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:8000/api/v1/user/logout", {
-        headers: {
-          Authorization: `Bearer ${token}`, // send token if needed
-        },
-      });
+      const res = await api.get("/user/logout");
       if (res.data.success) {
         toast.success(res.data.message);
-        localStorage.removeItem("token"); // remove token
-        setUser(false); // update navbar
+        logoutContext();
         navigate("/login");
       }
     } catch (error) {
@@ -34,13 +22,28 @@ const Navbar = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <nav className="bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <span className="font-bold text-xl text-blue-600">ExpenseTracker</span>
+            <div>Loading...</div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <span className="font-bold text-xl text-blue-600">MyLogo</span>
+            <Link to="/" className="font-bold text-xl text-blue-600">
+              ExpenseTracker
+            </Link>
           </div>
 
           {/* Desktop Menu */}
@@ -50,12 +53,21 @@ const Navbar = () => {
             </Link>
 
             {user ? (
-              <button
-                onClick={logoutHandler}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-blue-700"
-              >
-                Logout
-              </button>
+              <>
+                <Link to="/expenses" className="text-gray-700 hover:text-blue-600">
+                  All Expenses
+                </Link>
+                <Link to="/expenses/add" className="text-gray-700 hover:text-blue-600">
+                  Add Expense
+                </Link>
+                <span className="text-gray-600">Hi, {user.fullname}</span>
+                <button
+                  onClick={logoutHandler}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link
@@ -119,28 +131,54 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden px-4 pb-4 space-y-2">
-          <Link to="/" className="block text-gray-700 hover:text-blue-600">
+          <Link
+            to="/"
+            className="block text-gray-700 hover:text-blue-600"
+            onClick={() => setIsOpen(false)}
+          >
             Home
           </Link>
 
           {user ? (
-            <button
-              onClick={logoutHandler}
-              className="block w-full text-left px-4 py-2 bg-red-600 text-white rounded hover:bg-blue-700"
-            >
-              Logout
-            </button>
+            <>
+              <Link
+                to="/expenses"
+                className="block text-gray-700 hover:text-blue-600"
+                onClick={() => setIsOpen(false)}
+              >
+                All Expenses
+              </Link>
+              <Link
+                to="/expenses/add"
+                className="block text-gray-700 hover:text-blue-600"
+                onClick={() => setIsOpen(false)}
+              >
+                Add Expense
+              </Link>
+              <span className="block text-gray-600 py-2">Hi, {user.fullname}</span>
+              <button
+                onClick={() => {
+                  logoutHandler();
+                  setIsOpen(false);
+                }}
+                className="block w-full text-left px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <Link
                 to="/login"
                 className="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={() => setIsOpen(false)}
               >
                 Login
               </Link>
               <Link
                 to="/signup"
                 className="block px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50"
+                onClick={() => setIsOpen(false)}
               >
                 Sign Up
               </Link>

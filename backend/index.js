@@ -15,21 +15,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// CORS with credentials
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true,
+    credentials: true, // Allow cookies
   })
 );
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/expense", expenseRoute);
-// http://localhost:8000/api/v1/user/register
-// http://localhost:8000/api/v1/user/login
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
   connectDB();
-  console.log(`Server Listen at Port ${PORT}`);
+  console.log(`Server listening at Port ${PORT}`);
 });

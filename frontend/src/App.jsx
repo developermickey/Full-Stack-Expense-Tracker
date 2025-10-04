@@ -3,14 +3,17 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import CreateExpense from "./components/CreateExpense";
+import ExpenseList from "./components/ExpenseList";
 import Layout from "./components/Layout";
-import PublicRoute from "./components/PublicRoute"; // Import it
+import PublicRoute from "./components/PublicRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />, // Wrapper
+    element: <Layout />,
     children: [
       { path: "/", element: <Home /> },
       {
@@ -27,6 +30,22 @@ const appRouter = createBrowserRouter([
           <PublicRoute>
             <Signup />
           </PublicRoute>
+        ),
+      },
+      {
+        path: "/expenses/add",
+        element: (
+          <ProtectedRoute>
+            <CreateExpense />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/expenses",
+        element: (
+          <ProtectedRoute>
+            <ExpenseList />
+          </ProtectedRoute>
         ),
       },
     ],

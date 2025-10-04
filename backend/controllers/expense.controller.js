@@ -3,11 +3,10 @@ import { Expense } from "../models/expense.model.js";
 export const addExpense = async (req, res) => {
   try {
     const { description, amount, category } = req.body;
-
-    const userId = req.id; // current login user id
+    const userId = req.id;
 
     if (!description || !amount || !category) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "All fields are required",
         success: false,
       });
@@ -20,24 +19,27 @@ export const addExpense = async (req, res) => {
       userId,
     });
 
-    return res.status(200).json({
+    return res.status(201).json({
       message: "New Expense Added",
       success: true,
       expense,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      message: "Failed to add expense",
+      success: false,
+    });
   }
 };
 
 export const getExpense = async (req, res) => {
   try {
-    const userId = req.id; // logged-in user id
-
+    const userId = req.id;
     const category = req.query.category || "";
     const done = req.query.done || "";
 
-    const query = { userId }; // always filter by userId
+    const query = { userId };
 
     if (category && category.toLowerCase() !== "all") {
       query.category = { $regex: category, $options: "i" };
@@ -49,21 +51,21 @@ export const getExpense = async (req, res) => {
       query.done = false;
     }
 
-    const expense = await Expense.find(query);
+    const expenses = await Expense.find(query).sort({ createdAt: -1 });
 
-    if (!expense || expense.length === 0) {
+    if (!expenses || expenses.length === 0) {
       return res.status(404).json({
-        message: "No expense found!",
+        message: "No expenses found!",
         success: false,
       });
     }
 
     return res.status(200).json({
-      expense,
+      expenses,
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "Something went wrong",
       success: false,
@@ -74,37 +76,57 @@ export const getExpense = async (req, res) => {
 export const markAsDoneUndone = async (req, res) => {
   try {
     const expenseId = req.params.id;
-    const done = req.body;
-    const expense = await Expense.findByIdAndUpdate(expenseId, done, {
-      new: true,
-    });
+    const { done } = req.body;
+
+    const expense = await Expense.findByIdAndUpdate(
+      expenseId,
+      { done },
+      { new: true }
+    );
 
     if (!expense) {
-      return res.status(401).json({
-        message: "Expense Not found!",
+      return res.status(404).json({
+        message: "Expense not found!",
         success: false,
       });
     }
 
     return res.status(200).json({
-      message: `Expense mark ${expense.done ? "done" : "undone"}.`,
+      message: `Expense marked ${expense.done ? "done" : "undone"}.`,
       success: true,
+      expense,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      message: "Failed to update expense",
+      success: false,
+    });
   }
 };
 
 export const removeExpense = async (req, res) => {
   try {
     const expenseId = req.params.id;
-    await Expense.findByIdAndDelete(expenseId);
+    const expense = await Expense.findByIdAndDelete(expenseId);
+
+    if (!expense) {
+      return res.status(404).json({
+        message: "Expense not found!",
+        success: false,
+      });
+    }
+
     return res.status(200).json({
       message: "Expense Deleted",
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      message: "Failed to delete expense",
+      success: false,
+    });
   }
 };
 
@@ -112,6 +134,14 @@ export const updateExpense = async (req, res) => {
   try {
     const { description, amount, category } = req.body;
     const expenseId = req.params.id;
+
+    if (!description || !amount || !category) {
+      return res.status(400).json({
+        message: "All fields are required",
+        success: false,
+      });
+    }
+
     const updateData = {
       description,
       amount,
@@ -122,12 +152,23 @@ export const updateExpense = async (req, res) => {
       new: true,
     });
 
+    if (!expense) {
+      return res.status(404).json({
+        message: "Expense not found!",
+        success: false,
+      });
+    }
+
     return res.status(200).json({
       message: "Expense Updated",
       success: true,
       expense,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      message: "Failed to update expense",
+      success: false,
+    });
   }
 };

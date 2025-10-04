@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 const Home = () => {
   return (
     <>
-    
+
       <div className="bg-gray-50 min-h-screen font-sans">
         {/* Hero Section */}
         <header className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
@@ -30,7 +30,7 @@ const Home = () => {
             </div>
             <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center">
               <img
-                src="https://cdn.dribbble.com/users/1007875/screenshots/6407015/expense_tracker_dribbble.png"
+                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Expense Tracker Illustration"
                 className="w-full max-w-md rounded-lg shadow-lg"
               />
