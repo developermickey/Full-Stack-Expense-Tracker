@@ -31,7 +31,7 @@ app.use(
 const clientBuildPath = path.join(__dirname, "../frontend/dist")
 app.use(express.static(clientBuildPath))
 
-app.get("/*", function (req, res) {
+app.get("/:path*", (req, res) => {
   res.sendFile(path.resolve(clientBuildPath, "index.html"));
 });
 
