@@ -5,6 +5,7 @@ import cors from "cors";
 import connectDB from "./database/db.js";
 import userRoute from "./routes/user.routes.js";
 import expenseRoute from "./routes/expense.route.js";
+import path from "path"
 
 dotenv.config({});
 
@@ -24,7 +25,7 @@ app.use(
 );
 
 
-const clientBuildPath = Path2D.join(__dirname, "../frontend/dist")
+const clientBuildPath = path.join(__dirname, "../frontend/dist")
 app.use(express.static(clientBuildPath))
 
 app.get("*", (req, res) => {
