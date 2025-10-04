@@ -80,12 +80,12 @@ const Home = () => {
             </p>
             <div className="flex justify-center gap-6 flex-wrap">
               <img
-                src="https://cdn.dribbble.com/users/1007875/screenshots/6407015/expense_tracker_dribbble.png"
+                src="https://images.unsplash.com/photo-1639389016105-2fb11199fb6b?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Expense Dashboard"
                 className="w-full max-w-sm rounded-lg shadow-lg hover:scale-105 transform transition"
               />
               <img
-                src="https://cdn.dribbble.com/users/1007875/screenshots/6407015/expense_tracker_dribbble.png"
+                src="https://images.unsplash.com/photo-1542744173-05336fcc7ad4?q=80&w=1604&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Expense Dashboard"
                 className="w-full max-w-sm rounded-lg shadow-lg hover:scale-105 transform transition"
               />
